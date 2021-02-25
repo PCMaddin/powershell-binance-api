@@ -41,7 +41,6 @@ $hmacsha.key = [Text.Encoding]::ASCII.GetBytes($this.ApiSecret)
 $signature = $hmacsha.ComputeHash([Text.Encoding]::ASCII.GetBytes("$message"))
 return $signature = [System.BitConverter]::ToString($signature) -replace '-', ''
 }
-
 [long]Get_Time(){ return ($this.get("time")|ConvertFrom-Json).ServerTime}
 [String]Choose_ApiServer(){
 $resultlist =@()
@@ -61,7 +60,6 @@ $ProgressPreference="SilentlyContinue"
  }
 [void]Set_ApiServer([String]$newApiServer){ $this.usedapiserver=$newApiServer}
 [void]Set_ApiCredentials([String]$newApiKey,[String]$newApiSecret){ $this.ApiKey=$newApiKey;$this.ApiSecret=$newApiSecret}
-
 [PSCustomObject]Exchange_Info() { return ($this.get("exchangeInfo") | ConvertFrom-Json) }
 [PSCustomObject]price_ticker(){ return ($this.get("ticker/price") | ConvertFrom-Json) }
 [PSCustomObject]price_ticker([String] $symbol){ return ($this.get("ticker/price","symbol=$Symbol") | ConvertFrom-Json) }
@@ -74,6 +72,23 @@ return (($this.get("account","timestamp=$timestamp",$true,$true) | ConvertFrom-J
 [PSCustomObject]depth([String] $symbol){ return ($this.get("depth","symbol=$Symbol") | ConvertFrom-Json) }
 [PSCustomObject]trades([String] $symbol,[int] $limit){ return ($this.get("trades","symbol=$Symbol&limit=$limit") | ConvertFrom-Json) }
 [PSCustomObject]trades([String] $symbol){ return ($this.get("trades","symbol=$Symbol") | ConvertFrom-Json) }
+[PSCustomObject]historicalTrades([String] $symbol,[int] $limit, [int]$fromID){ return ($this.get("historicalTrades","symbol=$Symbol&limit=$limit&fromID=$fromID",$true) | ConvertFrom-Json) }
+[PSCustomObject]historicalTrades([String] $symbol,[int] $limit){ return ($this.get("historicalTrades","symbol=$Symbol&limit=$limit",$true) | ConvertFrom-Json) }
+[PSCustomObject]historicalTrades([String] $symbol){ return ($this.get("historicalTrades","symbol=$Symbol",$true) | ConvertFrom-Json) }
+[PSCustomObject]avg_price([String] $symbol){ return ($this.get("avgPrice","symbol=$Symbol") | ConvertFrom-Json) }
+[PSCustomObject]ticker24hr(){ return ($this.get("ticker/24hr") | ConvertFrom-Json) }
+[PSCustomObject]ticker24hr([String] $symbol){ return ($this.get("ticker/24hr","symbol=$Symbol") | ConvertFrom-Json) }
+[PSCustomObject]bookticker(){ return ($this.get("ticker/bookTicker") | ConvertFrom-Json) }
+[PSCustomObject]bookticker([String] $symbol){ return ($this.get("ticker/bookTicker","symbol=$Symbol") | ConvertFrom-Json) }
+[PSCustomObject]aggTrades([String] $symbol,[int] $limit, [int]$fromID,[long] $starttime, [long] $endtime){ return ($this.get("aggTrades","symbol=$Symbol&limit=$limit&fromID=$fromID&StartTime=$starttime&endtime=$endtime",$true) | ConvertFrom-Json) }
+[PSCustomObject]aggTrades([String] $symbol,[int] $limit, [int]$fromID){ return ($this.get("aggTrades","symbol=$Symbol&limit=$limit&fromID=$fromID",$true) | ConvertFrom-Json) }
+[PSCustomObject]aggTrades([String] $symbol,[int] $limit){ return ($this.get("aggTrades","symbol=$Symbol&limit=$limit",$true) | ConvertFrom-Json) }
+[PSCustomObject]klines([String] $symbol,[string] $interval, [int]$limit,[long] $starttime, [long] $endtime ){ return ($this.get("klines","symbol=$Symbol&limit=$limit&interval=$interval&StartTime=$starttime&endtime=$endtime",$true) | ConvertFrom-Json) }
+[PSCustomObject]klines([String] $symbol,[string] $interval, [int]$limit){ return ($this.get("klines","symbol=$Symbol&limit=$limit&interval=$interval",$true) | ConvertFrom-Json) }
+[PSCustomObject]klines([String] $symbol,[string] $interval){ return ($this.get("klines","symbol=$Symbol&interval=$interval",$true) | ConvertFrom-Json) }
+[PSCustomObject]myTrades([String] $symbol,[long] $recvWindow, [int]$limit,[long] $starttime, [long] $endtime ){[long]$timestamp=(New-TimeSpan -Start "01.01.1970" -End $(Get-Date)).TotalMilliSeconds - $this.timediff; return ($this.get("myTrades","symbol=$Symbol&limit=$limit&timestamp=$timestamp&StartTime=$starttime&endtime=$endtime&recvWindow=$recvWindow",$true,$true) | ConvertFrom-Json) }
+[PSCustomObject]myTrades([String] $symbol,[long] $recvWindow, [int]$limit){[long]$timestamp=(New-TimeSpan -Start "01.01.1970" -End $(Get-Date)).TotalMilliSeconds - $this.timediff; return ($this.get("myTrades","symbol=$Symbol&limit=$limit&timestamp=$timestamp&recvWindow=$recvWindow",$true,$true) | ConvertFrom-Json) }
+[PSCustomObject]myTrades([String] $symbol){[long]$timestamp=(New-TimeSpan -Start "01.01.1970" -End $(Get-Date)).TotalMilliSeconds - $this.timediff; return ($this.get("myTrades","symbol=$Symbol&timestamp=$timestamp",$true,$true) | ConvertFrom-Json) }
 
 }
 
@@ -87,3 +102,4 @@ $depth = $bt.depth("ETHBTC")
 $trades =$bt.trades("ETHBTC")
 $exchangeinfo =$bt.Exchange_Info()
 $ratelimits=$exchangeinfo.rateLimits
+$bt.klines("ETHBTC","1m")
