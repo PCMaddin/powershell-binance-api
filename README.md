@@ -1,6 +1,6 @@
 # powershell-binance-api
 Repository for project powershell-binance-api
-This is a (not yet) Powershell Module for the Binance API
+This is a Powershell Module for the Binance API
 
 Requirements:
 
