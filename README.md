@@ -22,8 +22,15 @@ Run it!
 
 Features:
 
-Can connect to Binance and get some informations even if a signed request is needed
+-Can connect to Binance and get some informations even if a signed request is needed
+-can make new spot limit order and query it's status
 
+
+Roadmap:
+-market orders
+-other markets (margin/futures)
+-simplify and comment code
+-everthing else from API
 
 
 Disclaimer:
